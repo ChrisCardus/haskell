@@ -49,8 +49,19 @@ decode xs | lookup (findLetter xs) morseTable /= Nothing = fromJust (lookup (fin
           | xs /= [] = ""
 
 
+address :: [MorseUnit] -> String
+address [] = []
+address x = if take 2 x == dit then "l" ++ address (drop 2 x) else "r" ++ address (drop 4 x)
+
+
+sortMorseList :: [MorseList] -> [MorseList]
+sortMorseList [] = []
+sortMorseList (x:xs) = 
+
+
 toTree :: MorseTable -> MorseTree
-toTree = undefined
+toTree [x] = Leaf (snd x)
+toTree (x:xs) = Branch1 (snd x) (toTree xs) (toTree xs)
 
 
 toTable :: MorseTree -> MorseTable
