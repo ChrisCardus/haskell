@@ -19,20 +19,22 @@ toUpper :: Char -> Char
 toUpper c = if isLower c then toEnum (fromEnum c - 32) else c
 
 
-{-isDit :: [MorseUnit] -> Bool
-isDit [] = False
-isDit (x:y:xs) = if x == Beep && y == Silence then True else False-}
+fromJust :: Maybe Char -> String
+fromJust (Just a) = [a]
+fromJust Nothing = ""
 
 
-getUnit :: [MorseUnit] -> [MorseUnit]
-getUnit xs | xs == [] = []
-           | xs == [Silence, Silence, Silence, Silence, _] = [mediumGap]
-           | xs == [Silence, Silence, Silence, _] = [shortGap]
-           | xs == [Beep, Beep, Beep, Silence, _] = [dah]
-           | xs == [Beep, Silence, _] = [dit]
+findLetter :: [MorseUnit] -> [MorseUnit]
+findLetter xs | xs == [] = []
+              | take 4 xs == [Beep, Beep, Beep, Silence] = dah ++ findLetter (drop 4 xs)
+              | take 2 xs == [Beep, Silence] = dit ++ findLetter (drop 2 xs)
+              | xs /= [] = []
 
-getLetter :: [MorseUnit]
-getLetter xs | getUnit xs == [dit] = 
+findGap :: [MorseUnit] -> [MorseUnit]
+findGap xs | take 4 xs == [Silence, Silence, Silence, Silence] = mediumGap
+          | take 2 xs == [Silence, Silence] = shortGap
+          | xs /= [] || xs == [] = []
+
 
 encode :: String -> [MorseUnit]
 encode [] = []
@@ -41,7 +43,10 @@ encode (x:xs) = if x /= ' ' then codeSymbol (toUpper x) ++ shortGap ++ encode (x
 
 decode :: [MorseUnit] -> String
 decode [] = ""
-decode xs = if ditOrDah xs == dit then 
+decode xs | lookup (findLetter xs) morseTable /= Nothing = fromJust (lookup (findLetter xs) morseTable) ++ decode (drop (length (findLetter xs)) xs)
+          | findGap xs == mediumGap = " " ++ decode (drop (length mediumGap) xs)
+          | findGap xs == shortGap = "" ++ decode (drop (length shortGap) xs)
+          | xs /= [] = ""
 
 
 toTree :: MorseTable -> MorseTree
