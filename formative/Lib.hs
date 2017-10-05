@@ -21,7 +21,7 @@ data MorseTree = Nil
                | Leaf Char
                | Branch1 Char MorseTree MorseTree
                | Branch0 MorseTree MorseTree
-  deriving Show
+  deriving (Eq, Show)
 codeSymbol :: Char -> [MorseUnit]
 codeSymbol 'A' = dit ++ dah
 codeSymbol 'B' = dah ++ dit ++ dit ++ dit
