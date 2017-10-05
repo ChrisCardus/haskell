@@ -24,14 +24,24 @@ isDit [] = False
 isDit (x:y:xs) = if x == Beep && y == Silence then True else False-}
 
 
+getUnit :: [MorseUnit] -> [MorseUnit]
+getUnit xs | xs == [] = []
+           | xs == [Silence, Silence, Silence, Silence, _] = [mediumGap]
+           | xs == [Silence, Silence, Silence, _] = [shortGap]
+           | xs == [Beep, Beep, Beep, Silence, _] = [dah]
+           | xs == [Beep, Silence, _] = [dit]
+
+getLetter :: [MorseUnit]
+getLetter xs | getUnit xs == [dit] = 
+
 encode :: String -> [MorseUnit]
 encode [] = []
 encode (x:xs) = if x /= ' ' then codeSymbol (toUpper x) ++ shortGap ++ encode (xs) else mediumGap ++ encode (xs)
 
 
 decode :: [MorseUnit] -> String
-decode [] = []
-decode (x:xs) = 
+decode [] = ""
+decode xs = if ditOrDah xs == dit then 
 
 
 toTree :: MorseTable -> MorseTree
