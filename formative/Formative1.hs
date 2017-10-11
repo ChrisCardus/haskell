@@ -28,10 +28,6 @@ fromJust :: Maybe Char -> String
 fromJust (Just a) = [a]
 fromJust Nothing = ""
 
-{-fromJust' :: Maybe Char -> Char
-fromJust' (Just a) = a
-fromJust' Nothing = ' '-}
-
 
 findLetter :: [MorseUnit] -> [MorseUnit]
 findLetter xs | xs == [] = []
@@ -62,47 +58,25 @@ address :: [MorseUnit] -> Address
 address xs | xs == [] = []
            | take 4 xs == [Beep, Beep, Beep, Silence] = [R] ++ address (drop 4 xs)
            | take 2 xs == [Beep, Silence] = [L] ++ address (drop 2 xs)
-           | otherwise = []
 
 
-addressList :: MorseTable -> [(Address, Char)]
+addressList :: MorseTable -> [Address]
 addressList [] = []
-addressList (x:xs) = ((address (fst x)), (snd x)) : addressList xs
+addressList (x:xs) = (address (fst x)) : addressList xs
 
 
-{-sortAddressList :: [Address] -> [Address]
+sortAddressList :: [Address] -> [Address]
 sortAddressList [] = []
 sortAddressList (x:xs) = sortAddressList smaller ++ [x] ++ sortAddressList larger
                          where
                             smaller = [a | a <- xs, a <= x]
-                            larger = [b | b <- xs, b > x]-}
+                            larger = [b | b <- xs, b > x]
 
 
---Cycle through each location in the tree breadth first and check if the address of said location exists within addressList. If it does, Branch1, if it doesn't, Branch0. End when the address list is empty.
 toTree :: MorseTable -> MorseTree
-toTree xs = toTree' xs [] (addressList morseTable)
-
-
-removeItem :: Address -> [(Address, Char)] -> [(Address, Char)]
-removeItem _ [] = []
-removeItem x (y:ys) | x == (fst y)    = ys
-                    | otherwise = y : removeItem x ys
-
-
-findChar :: Address -> [(Address, Char)] -> Char
-findChar _ [] = ' '
-findChar x (y:ys) | x == (fst y) = (snd y)
-                  | otherwise = findChar x ys
-
-
-toTree' :: MorseTable -> Address -> [(Address, Char)] -> MorseTree
-toTree' [] [] _ = Branch0 Nil Nil
-toTree' xs [] zs = Branch0 (toTree' xs [L] zs) (toTree' xs [R] zs)
-toTree' xs ys zs = if elem ys (map fst zs) && (elem (ys ++ [L]) (map fst zs) || elem (ys ++ [R]) (map fst zs))
-                   then Branch1 (findChar ys zs) (if elem (ys ++ [L]) (map fst zs) || elem (ys ++ [L,L]) (map fst zs) || elem (ys ++ [L,R]) (map fst zs) then toTree' xs (ys ++ [L]) (removeItem ys zs) else Nil) (if elem (ys ++ [R]) (map fst zs) || elem (ys ++ [R,L]) (map fst zs) || elem (ys ++ [R,R]) (map fst zs) then toTree' xs (ys ++ [R]) (removeItem ys zs) else Nil)
-                   else if elem ys (map fst zs) && not (elem (ys ++ [L]) (map fst zs)) && not (elem (ys ++ [R]) (map fst zs)) && not (elem (ys ++ [L,R]) (map fst zs)) && not (elem (ys ++ [R,R]) (map fst zs)) && not (elem (ys ++ [L,L]) (map fst zs)) && not (elem (ys ++ [R,L]) (map fst zs))
-                   then Leaf (findChar ys zs)
-                   else Branch0 (if elem (ys ++ [L]) (map fst zs) || elem (ys ++ [L,L]) (map fst zs) || elem (ys ++ [L,R]) (map fst zs) then toTree' xs (ys ++ [L]) zs else Nil) (if elem (ys ++ [R]) (map fst zs) || elem (ys ++ [R,L]) (map fst zs) || elem (ys ++ [R,R]) (map fst zs) then toTree' xs (ys ++ [R]) zs else Nil)
+toTree [] = Nil
+toTree [x] = Leaf (snd x)
+toTree (x:xs) = Branch1 (snd x) (toTree xs) (toTree xs)
 
 
 toTable :: MorseTree -> MorseTable
