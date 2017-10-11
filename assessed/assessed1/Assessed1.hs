@@ -8,7 +8,8 @@ import safe Lib
 
 -- Q1
 expr2comb :: BoolExpr -> BoolComb Bool
-expr2comb = undefined
+expr2comb be | be == BTrue = Atom True
+             | be == BFalse = Atom False
 
 comb2expr :: (BoolComb Bool) -> BoolExpr
 comb2expr = undefined
@@ -16,6 +17,7 @@ comb2expr = undefined
 -- Q2
 eval :: BoolComb Bool -> Bool
 eval = undefined
+
 -- Q3
 evalVar :: BoolComb (Either String Bool) -> [(String , Bool)] -> Maybe Bool
 evalVar = undefined
