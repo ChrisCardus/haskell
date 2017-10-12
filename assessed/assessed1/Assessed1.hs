@@ -31,15 +31,22 @@ eval (And b1 b2) = if (eval b1) == True && (eval b2) == True then True else Fals
 
 -- Q3
 evalVar :: BoolComb (Either String Bool) -> [(String , Bool)] -> Maybe Bool
-evalvar (Not bc) t = if (evalVar bc t) == Just False then Just True else Just False
+evalVar (Not bc) t = if (evalVar bc t) == Just False then Just True else Just False
 evalVar (Or b1 b2) t = if (evalVar b1 t) == Just True || (evalVar b2 t) == Just True then Just True else Just False
 evalVar (And b1 b2) t = if (evalVar b1 t) == Just True && (evalVar b2 t) == Just True then Just True else Just False
-evalVar (Atom (Right e)) t = Just e
+evalVar (Atom (Right e)) _ = Just e
 evalVar (Atom (Left e)) t = if elem e (map fst t) then lookup e t else Nothing
 
 evalVar' :: BoolComb (Either String Bool) -> (String -> Maybe Bool) -> Maybe Bool
-evalVar' = undefined
+evalVar' (Not bc) f = if (evalVar' bc f) == Just False then Just True else Just False
+evalVar' (Or b1 b2) f = if (evalVar' b1 f) == Just True || (evalVar' b2 f) == Just True then Just True else Just False
+evalVar' (And b1 b2) f = if (evalVar' b1 f) == Just True && (evalVar' b2 f) == Just True then Just True else Just False
+evalVar' (Atom (Right e)) _ = Just e
+evalVar' (Atom (Left e)) f = if f e == Just True then Just True else Just False
 
 -- Q4
 showExpr :: BoolComb Char -> String
-showExpr = undefined 
+showExpr (Not bc) = notS ++ (showExpr bc)
+showExpr (Or b1 b2) = (showExpr b1) ++ orS ++ (showExpr b2)
+showExpr (And b1 b2) = (showExpr b1) ++ andS ++ (showExpr b2)
+showExpr (Atom c) = [c]
