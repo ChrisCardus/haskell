@@ -46,7 +46,10 @@ evalVar' (Atom (Left e)) f = if f e == Just True then Just True else Just False
 
 -- Q4
 showExpr :: BoolComb Char -> String
-showExpr (Not bc) = notS ++ (showExpr bc)
+showExpr (Not (Atom bc)) = notS ++ (showExpr (Atom bc))
+showExpr (Not bc) = notS ++ "(" ++ (showExpr bc) ++ ")"
 showExpr (Or b1 b2) = (showExpr b1) ++ orS ++ (showExpr b2)
+showExpr (And (Or b1 b2) (b3)) = "(" ++ (showExpr (Or b1 b2)) ++ ")" ++ andS ++ (showExpr b3)
+showExpr (And (b1) (Or b2 b3)) = (showExpr b1) ++ andS ++ "(" ++ (showExpr (Or b2 b3)) ++ ")"
 showExpr (And b1 b2) = (showExpr b1) ++ andS ++ (showExpr b2)
 showExpr (Atom c) = [c]
