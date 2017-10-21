@@ -31,22 +31,23 @@ eval (And b1 b2) = if (eval b1) == True && (eval b2) == True then True else Fals
 
 -- Q3
 evalVar :: BoolComb (Either String Bool) -> [(String , Bool)] -> Maybe Bool
-evalVar (Not bc) t = if (evalVar bc t) == Just False then Just True else Just False
-evalVar (Or b1 b2) t = if (evalVar b1 t) == Just True || (evalVar b2 t) == Just True then Just True else Just False
-evalVar (And b1 b2) t = if (evalVar b1 t) == Just True && (evalVar b2 t) == Just True then Just True else Just False
+evalVar (Not bc) t = if (evalVar bc t) == Just False then Just True else if (evalVar bc t) == Nothing then Nothing else Just False
+evalVar (Or b1 b2) t = if (evalVar b1 t) == Just True || (evalVar b2 t) == Just True then Just True else if (evalVar b1 t) == Nothing || (evalVar b2 t) == Nothing then Nothing else Just False
+evalVar (And b1 b2) t = if (evalVar b1 t) == Just True && (evalVar b2 t) == Just True then Just True else if (evalVar b1 t) == Nothing || (evalVar b2 t) == Nothing then Nothing else Just False
 evalVar (Atom (Right e)) _ = Just e
 evalVar (Atom (Left e)) t = if elem e (map fst t) then lookup e t else Nothing
 
 evalVar' :: BoolComb (Either String Bool) -> (String -> Maybe Bool) -> Maybe Bool
-evalVar' (Not bc) f = if (evalVar' bc f) == Just False then Just True else Just False
-evalVar' (Or b1 b2) f = if (evalVar' b1 f) == Just True || (evalVar' b2 f) == Just True then Just True else Just False
-evalVar' (And b1 b2) f = if (evalVar' b1 f) == Just True && (evalVar' b2 f) == Just True then Just True else Just False
+evalVar' (Not bc) f = if (evalVar' bc f) == Just False then Just True else if (evalVar' bc f) == Nothing then Nothing else Just False
+evalVar' (Or b1 b2) f = if ((evalVar' b1 f) == Just True && Not ((evalVar' b1 f) == Nothing)) || ((evalVar' b2 f) == Just True && Not ((evalVar' b2 f) == Nothing))  then Just True else if (evalVar' b1 f) == Nothing || (evalVar' b2 f) == Nothing then Nothing else Just False
+evalVar' (And b1 b2) f = if (evalVar' b1 f) == Just True && (evalVar' b2 f) == Just True then Just True else if (evalVar' b1 f) == Nothing || (evalVar' b2 f) == Nothing then Nothing else Just False
 evalVar' (Atom (Right e)) _ = Just e
-evalVar' (Atom (Left e)) f = if f e == Just True then Just True else Just False
+evalVar' (Atom (Left e)) f = if f e == Just True then Just True else if f e == Nothing then Nothing else Just False
 
 -- Q4
 showExpr :: BoolComb Char -> String
 showExpr (Not (Atom bc)) = notS ++ (showExpr (Atom bc))
+showExpr (Not (Not bc)) = notS ++ (showExpr (Not bc))
 showExpr (Not bc) = notS ++ "(" ++ (showExpr bc) ++ ")"
 showExpr (Or b1 b2) = (showExpr b1) ++ orS ++ (showExpr b2)
 showExpr (And (Or b1 b2) (b3)) = "(" ++ (showExpr (Or b1 b2)) ++ ")" ++ andS ++ (showExpr b3)
