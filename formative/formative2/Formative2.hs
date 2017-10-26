@@ -32,15 +32,21 @@ import safe K   (k)
 -- End of header.
 
 
-height :: Tree a -> Int
-height = undefined
 
+height :: Tree a -> Int
+height Empty = -1
+height (Branch (t:_) _) = 1 + height (fst t)
+
+{-isSorted :: Ord a => Tree a -> a -> Bool
+isSorted Empty _ = True
+isSorted (Branch [] x) y = isSorted x y
+isSorted (Branch (t:ts) x) y = if isSorted (fst t) (snd t) then isSorted (Branch ts x) y else False-}
 
 p0         :: Ord a => Tree a -> Bool
 p1, p2, p3 ::          Tree a -> Bool
-
 p0 = undefined
-p1 = undefined
+p1 Empty = True
+p1 (Branch ts _) = if (length ts + 1) >= 2 && (length ts + 1) <= (2 * k + 1) then True else False
 p2 = undefined
 p3 = undefined
 
