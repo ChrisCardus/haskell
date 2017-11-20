@@ -22,11 +22,7 @@ tlookup x (Branch ((t,(Pair k v)):ts) t') = if x == k then Just v else if x > k 
 -- Q3
 rtlookup :: Ord k => (k,k) -> Tree (Record k v) -> [v]
 rtlookup = undefined
-{-rtlookup x Empty = []
-rtlookup (l, m) (Branch ((t,(Pair k v)):ts) t') = if l <= k && k <= m
-                                                  then rtlookup (l, m) t
-                                                  else rtlookup (l,m) (Branch ts t')-}
 
 -- Q4
-insertion :: Ord a => (a,a) -> Tree a -> Tree a
+insertion :: Ord a => a -> Tree a -> Tree a
 insertion = undefined
