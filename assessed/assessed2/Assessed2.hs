@@ -5,8 +5,6 @@ module Assessed2
 where
 
 import safe Lib
-import safe Forest -- Remove before submit
-import safe K -- Remove before submit
 
 -- Q1
 isInTree :: Ord a => a -> Tree a -> Bool
