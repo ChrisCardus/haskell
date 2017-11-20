@@ -5,6 +5,7 @@ module Assessed2
 where
 
 import safe Lib
+import safe K
 
 -- Q1
 isInTree :: Ord a => a -> Tree a -> Bool
