@@ -46,5 +46,6 @@ module PrettyPrinting where
     level = 0
 
     ppProgram :: Program -> (Int -> String)
-    ppProgram (x := e) = x ++ " " ++ "=" ++ " " ++ (ppExpr e) ++ ";\n"
-    ppProgram (Block (p:ps)) = "{\n" ++ if ps == [] then ppProgram p else ppProgram p ++ " "
+    ppProgram = question "pretty print programs"
+    {-ppProgram (x := e) = x ++ " " ++ "=" ++ " " ++ (ppExpr e) ++ ";\n"
+    ppProgram (Block (p:ps)) = "{\n" ++ if ps == [] then ppProgram p else ppProgram p ++ " "-}
